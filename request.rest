@@ -1,0 +1,204 @@
+GET http://localhost:5000/users
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjYsIm5hbWUiOiJBbGRoaSIsImVtYWlsIjoiYWxkaGl0YW5jYTg4OEBnbWFpbC5jb20iLCJpYXQiOjE3MzIyNjI2NzMsImV4cCI6MTczMjI2MjY5M30.CgFPC735sKl3-XHrjC_vbJ3oxibh8Cu-8hKLLKWzGw4
+
+
+### 
+GET http://localhost:5000/users/1
+
+###
+
+GET http://localhost:5000/search?check_email=aldhitanca888@gmail.com
+
+
+###
+POST http://localhost:5000/users
+Content-Type: application/json
+
+{
+    "name" : "Aldhi 2",
+    "email" : "aldhitanca128@gmail.com",
+    "password" : "123456",
+    "confPassword" : "123456",
+    "gender" : "Male"
+}
+
+
+
+###
+POST http://localhost:5000/login
+Content-Type: application/json
+
+{
+    "email" : "aldhitanca888@gmail.com",
+    "password" : "aldhi123"
+}
+
+
+###
+PATCH  http://localhost:5000/users/1
+Content-Type: application/json
+
+{
+    "name" : "Artikah",
+    "email" : "artikaramadhani328@gmail.com",
+    "gender" : "Female"
+}
+
+
+###
+DELETE   http://localhost:5000/users/56
+
+
+###
+GET http://localhost:5000/token
+
+
+###
+DELETE   http://localhost:5000/logout  
+
+
+###
+GET http://localhost:5000/stock
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjcsIm5hbWUiOiJBbGRoaSBUYW5jYSIsImVtYWlsIjoiYWxkaGl0YW5jYTg4OEBnbWFpbC5jb20iLCJpYXQiOjE3MzMxMjMwNzEsImV4cCI6MTczMzEyMzA5MX0.GmdgLm3jdYQAZgC9ydp5jVDPWM5_CqeTXfC-dcDdcjs
+
+
+###
+
+GET http://localhost:5000/stock/get_stock?barang=1&satuan=pcsss
+
+###
+GET http://localhost:5000/stockin?search_query=Aldhi&page=0&limit=10
+
+###
+GET http://localhost:5000/stock
+
+###
+POST http://localhost:5000/stockin
+Content-Type: application/json
+
+{
+    "id_barang" : "1",
+    "tanggal_beli" : "2024-11-24",
+    "quantity" : "5",
+    "satuan" : "Kg",
+    "submitted_by" : "Aldhi"
+}
+
+###
+POST http://localhost:5000/stockout
+Content-Type: application/json
+
+{
+    "id_barang" : "1",
+    "tanggal_keluar" : "2024-11-24",
+    "quantity" : "5",
+    "satuan" : "Kg",
+    "submitted_by" : "Aldhi"
+}
+
+###
+POST http://localhost:5000/stock
+Content-Type: application/json
+
+{
+    "id_barang" : "1",
+    "quantity" : "1",
+    "satuan" : "Kg"
+}
+
+###
+PATCH  http://localhost:5000/stock/2
+Content-Type: application/json
+
+{
+    "id_barang" : "5",
+    "tanggal_keluar" : "2024-11-24",
+    "quantity" : "5",
+    "satuan" : "Kg",
+    "submitted_by" : "Aldhi"
+}
+
+
+###
+DELETE   http://localhost:5000/stock/2
+
+
+###
+GET http://localhost:5000/product
+
+###
+POST http://localhost:5000/product
+Content-Type: application/json
+
+{
+    "name" : "1",
+    "description" : "Description",
+    "spesification" : "Spesification",
+    "custom" : "custom",
+    "link_tokped" : "https://www.tokopedia.com/tgr-aksesoris/cooling-pad-coolerpad-kipas-laptop-mini-notebook-netbook-lipat-x-votre?source=homepage.top_carousel.0.38456",
+    "link_whatsapp" : "https://wa.me/628111993755"
+}
+
+###
+PATCH  http://localhost:5000/product/1
+Content-Type: application/json
+
+{
+    "name" : "2",
+    "description" : "Description",
+    "spesification" : "Spesification",
+    "custom" : "custom",
+    "link_tokped" : "https://www.tokopedia.com/tgr-aksesoris/cooling-pad-coolerpad-kipas-laptop-mini-notebook-netbook-lipat-x-votre?source=homepage.top_carousel.0.38456",
+    "link_whatsapp" : "https://wa.me/628111993755"
+}
+
+
+###
+DELETE   http://localhost:5000/product/2
+
+
+###
+GET http://localhost:5000/specs
+
+###
+POST http://localhost:5000/product
+Content-Type: application/json
+
+{
+    "name" : "1",
+    "description" : "Description",
+    "spesification" : "Spesification",
+    "custom" : "custom",
+    "link_tokped" : "https://www.tokopedia.com/tgr-aksesoris/cooling-pad-coolerpad-kipas-laptop-mini-notebook-netbook-lipat-x-votre?source=homepage.top_carousel.0.38456",
+    "link_whatsapp" : "https://wa.me/628111993755"
+}
+
+###
+PATCH  http://localhost:5000/product/1
+Content-Type: application/json
+
+{
+    "name" : "2",
+    "description" : "Description",
+    "spesification" : "Spesification",
+    "custom" : "custom",
+    "link_tokped" : "https://www.tokopedia.com/tgr-aksesoris/cooling-pad-coolerpad-kipas-laptop-mini-notebook-netbook-lipat-x-votre?source=homepage.top_carousel.0.38456",
+    "link_whatsapp" : "https://wa.me/628111993755"
+}
+
+
+###
+DELETE   http://localhost:5000/product/2
+
+###
+GET http://localhost:5000/barang
+
+###
+POST http://localhost:5000/barang
+Content-Type: application/json
+
+{
+    "name" : "Plastik"
+}
+
+
