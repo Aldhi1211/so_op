@@ -151,7 +151,7 @@ export const editProfile = async (req, res) => {
 
         if (req.file) {
             // Jika ada file baru yang diunggah, gunakan file tersebut
-            imageUrl = `http://localhost:5000/${imageFolder}/${req.file.filename}`;
+            imageUrl = `http://18.141.194.160/api/${imageFolder}/${req.file.filename}`;
         }
 
         // Update foto profil berdasarkan email

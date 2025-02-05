@@ -130,7 +130,7 @@ export const AddGallery = async (req, res) => {
         }
 
         // URL file yang diupload
-        const imageUrl = `http://localhost:5000/${imageFolder}/${req.file.filename}`;
+        const imageUrl = `http://18.141.194.160/api/${imageFolder}/${req.file.filename}`;
 
         // Tambahkan data ke database
         const insertGallery = await Gallery.create({
@@ -173,7 +173,7 @@ export const updateGallery = async (req, res) => {
 
         if (req.file) {
             // Jika ada file yang diunggah, gunakan file baru
-            imageUrl = `http://localhost:5000/${imageFolder}/${req.file.filename}`;
+            imageUrl = `http://18.141.194.160/api/${imageFolder}/${req.file.filename}`;
         }
 
         // Update data produk
