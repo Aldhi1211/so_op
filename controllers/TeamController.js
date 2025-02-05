@@ -4,6 +4,7 @@ import multer from "multer";
 import fs from "fs";
 import { imageFolder } from './ProductController.js'
 import path from "path";
+import API_BASE_URL from "../config/config.js";
 
 export const getTeams = async (req, res) => {
     try {
@@ -124,7 +125,7 @@ export const AddTeams = async (req, res) => {
         }
 
         // URL file yang diupload
-        const imageUrl = `http://18.141.194.160/api/${imageFolder}/${req.file.filename}`;
+        const imageUrl = `${API_BASE_URL}/${imageFolder}/${req.file.filename}`;
 
         // Tambahkan data ke database
         const insertTeams = await Teams.create({
@@ -172,7 +173,7 @@ export const updateTeams = async (req, res) => {
 
         if (req.file) {
             // Jika ada file yang diunggah, gunakan file baru
-            imageUrl = `http://18.141.194.160/api/${imageFolder}/${req.file.filename}`;
+            imageUrl = `${API_BASE_URL}/${imageFolder}/${req.file.filename}`;
         }
 
         // Update data produk

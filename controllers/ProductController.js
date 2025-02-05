@@ -5,6 +5,7 @@ import multer from "multer";
 import fs from "fs";
 import path from "path";
 import { Op } from "sequelize";
+import API_BASE_URL from "../config/config.js";
 
 export const getProduct = async (req, res) => {
     try {
@@ -145,7 +146,7 @@ export const AddProduct = async (req, res) => {
         }
 
         // URL file yang diupload
-        const imageUrl = `http://18.141.194.160/api/${imageFolder}/${req.file.filename}`;
+        const imageUrl = `${API_BASE_URL}/${imageFolder}/${req.file.filename}`;
 
         // Tambahkan data ke database
         const insertProduct = await Product.create({
@@ -192,7 +193,7 @@ export const updateProduct = async (req, res) => {
 
         if (req.file) {
             // Jika ada file yang diunggah, gunakan file baru
-            imageUrl = `http://18.141.194.160/api/${imageFolder}/${req.file.filename}`;
+            imageUrl = `${API_BASE_URL}/${imageFolder}/${req.file.filename}`;
         }
 
         // Update data produk

@@ -4,6 +4,7 @@ import fs from "fs";
 import path from "path";
 import { imageFolder } from './ProductController.js'
 import { Op } from "sequelize";
+import API_BASE_URL from "../config/config.js";
 
 // export const getGallery = async (req, res) => {
 //     try {
@@ -130,7 +131,7 @@ export const AddGallery = async (req, res) => {
         }
 
         // URL file yang diupload
-        const imageUrl = `http://18.141.194.160/api/${imageFolder}/${req.file.filename}`;
+        const imageUrl = `${API_BASE_URL}/${imageFolder}/${req.file.filename}`;
 
         // Tambahkan data ke database
         const insertGallery = await Gallery.create({
@@ -173,7 +174,7 @@ export const updateGallery = async (req, res) => {
 
         if (req.file) {
             // Jika ada file yang diunggah, gunakan file baru
-            imageUrl = `http://18.141.194.160/api/${imageFolder}/${req.file.filename}`;
+            imageUrl = `${API_BASE_URL}/${imageFolder}/${req.file.filename}`;
         }
 
         // Update data produk
