@@ -7,7 +7,7 @@ GET http://localhost:5000/users/1
 
 ###
 
-GET http://localhost:5000/search?check_email=aldhitanca888@gmail.com
+GET http://localhost:5000/search?check_email=
 
 
 ###
@@ -80,7 +80,7 @@ Content-Type: application/json
     "id_barang" : "1",
     "tanggal_beli" : "2024-11-24",
     "quantity" : "5",
-    "satuan" : "Kg",
+    "satuan" : "Pcs",
     "submitted_by" : "Aldhi"
 }
 
