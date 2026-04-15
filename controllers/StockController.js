@@ -2,7 +2,55 @@ import Barang from "../models/Barang.js";
 import Stock from "../models/Stock.js";
 import StockIn from "../models/StockIn.js";
 import StockOut from "../models/StockOut.js";
-import { Op } from "sequelize";
+import { Op, Sequelize } from "sequelize";
+
+export const getCurrentStock = async (req, res) => {
+    try {
+        const stockInTotals = await StockIn.findAll({
+            attributes: [
+                'id_barang',
+                'satuan',
+                [Sequelize.fn('SUM', Sequelize.col('stock_in.quantity')), 'total_in']
+            ],
+            include: [{ model: Barang, as: 'barang', attributes: ['id', 'name'] }],
+            group: ['stock_in.id_barang', 'stock_in.satuan', 'barang.id', 'barang.name']
+        });
+
+        const stockOutTotals = await StockOut.findAll({
+            attributes: [
+                'id_barang',
+                'satuan',
+                [Sequelize.fn('SUM', Sequelize.col('quantity')), 'total_out']
+            ],
+            group: ['id_barang', 'satuan'],
+            raw: true
+        });
+
+        const outMap = {};
+        stockOutTotals.forEach(item => {
+            outMap[`${item.id_barang}-${item.satuan}`] = parseInt(item.total_out) || 0;
+        });
+
+        const result = stockInTotals.map(item => {
+            const key = `${item.id_barang}-${item.satuan}`;
+            const totalIn = parseInt(item.dataValues.total_in) || 0;
+            const totalOut = outMap[key] || 0;
+            return {
+                id_barang: item.id_barang,
+                barang: item.barang,
+                satuan: item.satuan,
+                total_in: totalIn,
+                total_out: totalOut,
+                current_stock: totalIn - totalOut
+            };
+        });
+
+        res.status(200).json({ response: result });
+    } catch (error) {
+        console.error(error.message);
+        res.status(500).json({ msg: 'Error fetching current stock' });
+    }
+};
 
 export const getStock = async (req, res) => {
 
@@ -25,12 +73,12 @@ export const getStock = async (req, res) => {
                 [Op.or]: [
                     {
                         '$barang.name$': {
-                            [Op.like]: `%${search}%`, // Search in Barang.name
+                            [Op.iLike]: `%${search}%`,
                         },
                     },
                     {
                         satuan: {
-                            [Op.like]: `%${search}%`, // Search in submitted_by
+                            [Op.iLike]: `%${search}%`,
                         },
                     },
                 ],
@@ -53,17 +101,17 @@ export const getStock = async (req, res) => {
                 [Op.or]: [
                     {
                         '$barang.name$': {
-                            [Op.like]: `%${search}%`, // Search in Barang.name
+                            [Op.iLike]: `%${search}%`,
                         },
                     },
                     {
                         satuan: {
-                            [Op.like]: `%${search}%`, // Search in submitted_by
+                            [Op.iLike]: `%${search}%`,
                         },
                     },
                 ],
                 id_barang: {
-                    [Op.ne]: null, // Ensure id_barang is not null
+                    [Op.ne]: null,
                 },
             },
             offset: offset,
@@ -231,25 +279,23 @@ export const getStockIn = async (req, res) => {
                 [Op.or]: [
                     {
                         '$barang.name$': {
-                            [Op.like]: `%${search}%`, // Search in Barang.name
+                            [Op.iLike]: `%${search}%`,
                         },
                     },
-
                     {
                         satuan: {
-                            [Op.like]: `%${search}%`, // Search in submitted_by
+                            [Op.iLike]: `%${search}%`,
                         },
                     },
                     {
                         submitted_by: {
-                            [Op.like]: `%${search}%`, // Search in submitted_by
+                            [Op.iLike]: `%${search}%`,
                         },
                     },
-                    {
-                        tanggal_beli: {
-                            [Op.like]: `%${search}%`, // Search in tanggal
-                        },
-                    },
+                    Sequelize.where(
+                        Sequelize.cast(Sequelize.col('stock_in.tanggal_beli'), 'varchar'),
+                        { [Op.iLike]: `%${search}%` }
+                    ),
                 ],
             },
         });
@@ -270,28 +316,26 @@ export const getStockIn = async (req, res) => {
                 [Op.or]: [
                     {
                         '$barang.name$': {
-                            [Op.like]: `%${search}%`, // Search in Barang.name
+                            [Op.iLike]: `%${search}%`,
                         },
                     },
-
                     {
                         satuan: {
-                            [Op.like]: `%${search}%`, // Search in submitted_by
+                            [Op.iLike]: `%${search}%`,
                         },
                     },
                     {
                         submitted_by: {
-                            [Op.like]: `%${search}%`, // Search in submitted_by
+                            [Op.iLike]: `%${search}%`,
                         },
                     },
-                    {
-                        tanggal_beli: {
-                            [Op.like]: `%${search}%`, // Search in tanggal
-                        },
-                    },
+                    Sequelize.where(
+                        Sequelize.cast(Sequelize.col('stock_in.tanggal_beli'), 'varchar'),
+                        { [Op.iLike]: `%${search}%` }
+                    ),
                 ],
                 id_barang: {
-                    [Op.ne]: null, // Ensure id_barang is not null
+                    [Op.ne]: null,
                 },
             },
             offset: offset,
@@ -348,25 +392,23 @@ export const getStockOut = async (req, res) => {
                 [Op.or]: [
                     {
                         '$barang.name$': {
-                            [Op.like]: `%${search}%`, // Search in Barang.name
+                            [Op.iLike]: `%${search}%`,
                         },
                     },
-
                     {
                         satuan: {
-                            [Op.like]: `%${search}%`, // Search in submitted_by
+                            [Op.iLike]: `%${search}%`,
                         },
                     },
                     {
                         submitted_by: {
-                            [Op.like]: `%${search}%`, // Search in submitted_by
+                            [Op.iLike]: `%${search}%`,
                         },
                     },
-                    {
-                        tanggal_keluar: {
-                            [Op.like]: `%${search}%`, // Search in tanggal
-                        },
-                    },
+                    Sequelize.where(
+                        Sequelize.cast(Sequelize.col('stock_out.tanggal_keluar'), 'varchar'),
+                        { [Op.iLike]: `%${search}%` }
+                    ),
                 ],
             },
         });
@@ -387,28 +429,26 @@ export const getStockOut = async (req, res) => {
                 [Op.or]: [
                     {
                         '$barang.name$': {
-                            [Op.like]: `%${search}%`, // Search in Barang.name
+                            [Op.iLike]: `%${search}%`,
                         },
                     },
-
                     {
                         satuan: {
-                            [Op.like]: `%${search}%`, // Search in submitted_by
+                            [Op.iLike]: `%${search}%`,
                         },
                     },
                     {
                         submitted_by: {
-                            [Op.like]: `%${search}%`, // Search in submitted_by
+                            [Op.iLike]: `%${search}%`,
                         },
                     },
-                    {
-                        tanggal_keluar: {
-                            [Op.like]: `%${search}%`, // Search in tanggal
-                        },
-                    },
+                    Sequelize.where(
+                        Sequelize.cast(Sequelize.col('stock_out.tanggal_keluar'), 'varchar'),
+                        { [Op.iLike]: `%${search}%` }
+                    ),
                 ],
                 id_barang: {
-                    [Op.ne]: null, // Ensure id_barang is not null
+                    [Op.ne]: null,
                 },
             },
             offset: offset,

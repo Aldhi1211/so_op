@@ -20,12 +20,12 @@ export const getProduct = async (req, res) => {
                 [Op.or]: [
                     {
                         name: {
-                            [Op.like]: `%${search}%`, // Search in Product.name
+                            [Op.iLike]: `%${search}%`, // Search in Product.name
                         },
                     },
                     {
                         description: {
-                            [Op.like]: `%${search}%`, // Search in Product.description
+                            [Op.iLike]: `%${search}%`, // Search in Product.description
                         },
                     },
                 ],
@@ -40,12 +40,12 @@ export const getProduct = async (req, res) => {
                 [Op.or]: [
                     {
                         name: {
-                            [Op.like]: `%${search}%`,
+                            [Op.iLike]: `%${search}%`,
                         },
                     },
                     {
                         description: {
-                            [Op.like]: `%${search}%`,
+                            [Op.iLike]: `%${search}%`,
                         },
                     },
                 ],

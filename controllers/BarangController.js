@@ -14,7 +14,7 @@ export const getBarang = async (req, res) => {
             where:
             {
                 name: {
-                    [Op.like]: `%${search}%`, // Search in Product.name
+                    [Op.iLike]: `%${search}%`, // Search in Product.name
                 },
 
 
@@ -28,7 +28,7 @@ export const getBarang = async (req, res) => {
             where:
             {
                 name: {
-                    [Op.like]: `%${search}%`, // Search in Product.name
+                    [Op.iLike]: `%${search}%`, // Search in Product.name
                 },
 
 

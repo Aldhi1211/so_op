@@ -11,6 +11,7 @@ import GalleryRoute from './routes/GalleryRoute.js';
 import TeamRoute from './routes/TeamRoute.js';
 import BarangRoute from './routes/BarangRoute.js';
 import ProductRoute from './routes/ProductRoute.js';
+import ContactRoute from './routes/ContactRoute.js';
 import sequelize from "./config/database.js";
 import { imageFolder } from "./controllers/ProductController.js";
 
@@ -42,6 +43,7 @@ app.use(BarangRoute);
 app.use(ProductRoute);
 app.use(TeamRoute);
 app.use(GalleryRoute);
+app.use(ContactRoute);
 
 // Middleware untuk menyajikan folder statis
 app.use(`/${imageFolder}`, express.static(path.join(__dirname, imageFolder)));

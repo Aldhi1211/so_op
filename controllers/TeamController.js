@@ -19,17 +19,17 @@ export const getTeams = async (req, res) => {
                 [Op.or]: [
                     {
                         name: {
-                            [Op.like]: `%${search}%`, // Search in Product.name
+                            [Op.iLike]: `%${search}%`, // Search in Product.name
                         },
                     },
                     {
                         jabatan: {
-                            [Op.like]: `%${search}%`, // Search in Product.description
+                            [Op.iLike]: `%${search}%`, // Search in Product.description
                         },
                     },
                     {
                         description: {
-                            [Op.like]: `%${search}%`, // Search in Product.description
+                            [Op.iLike]: `%${search}%`, // Search in Product.description
                         },
                     },
                 ],
@@ -44,17 +44,17 @@ export const getTeams = async (req, res) => {
                 [Op.or]: [
                     {
                         name: {
-                            [Op.like]: `%${search}%`,
+                            [Op.iLike]: `%${search}%`,
                         },
                     },
                     {
                         jabatan: {
-                            [Op.like]: `%${search}%`,
+                            [Op.iLike]: `%${search}%`,
                         },
                     },
                     {
                         description: {
-                            [Op.like]: `%${search}%`, // Search in Product.description
+                            [Op.iLike]: `%${search}%`, // Search in Product.description
                         },
                     },
                 ],
