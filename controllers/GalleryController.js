@@ -1,10 +1,6 @@
 import Gallery from "../models/Gallery.js";
-import multer from "multer";
-import fs from "fs";
-import path from "path";
-import { imageFolder } from './ProductController.js'
 import { Op } from "sequelize";
-import API_BASE_URL from "../config/config.js";
+import { uploadToCloudinary } from "../config/cloudinary.js";
 
 // export const getGallery = async (req, res) => {
 //     try {
@@ -98,23 +94,7 @@ export const getGalleryById = async (req, res) => {
 // };
 
 
-// Konfigurasi multer untuk menyimpan file gambar
-const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        cb(null, imageFolder); // Folder untuk menyimpan file
-    },
-    filename: (req, file, cb) => {
-        cb(null, `${Date.now()}-${file.originalname}`); // Nama file unik
-    },
-});
-
-const upload = multer({
-    storage: storage,
-    limits: { fileSize: 5 * 1024 * 1024 }, // Batas ukuran file 5MB
-});
-
-// Middleware untuk upload file
-export const uploadPhoto = upload.single("foto");
+export const uploadPhoto = uploadToCloudinary.single("foto");
 
 // Endpoint untuk menambahkan produk
 export const AddGallery = async (req, res) => {
@@ -131,7 +111,7 @@ export const AddGallery = async (req, res) => {
         }
 
         // URL file yang diupload
-        const imageUrl = `${API_BASE_URL}/${imageFolder}/${req.file.filename}`;
+        const imageUrl = req.file.path;
 
         // Tambahkan data ke database
         const insertGallery = await Gallery.create({
@@ -173,8 +153,7 @@ export const updateGallery = async (req, res) => {
         let imageUrl = gallery.foto; // Gambar lama tetap digunakan jika tidak ada file baru
 
         if (req.file) {
-            // Jika ada file yang diunggah, gunakan file baru
-            imageUrl = `${API_BASE_URL}/${imageFolder}/${req.file.filename}`;
+            imageUrl = req.file.path;
         }
 
         // Update data produk
