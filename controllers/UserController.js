@@ -117,10 +117,13 @@ export const register = async (req, res) => {
 // Konfigurasi multer untuk menyimpan file gambar
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
-        cb(null, imageFolder); // Folder untuk menyimpan file
+        if (!fs.existsSync(imageFolder)) {
+            fs.mkdirSync(imageFolder, { recursive: true });
+        }
+        cb(null, imageFolder);
     },
     filename: (req, file, cb) => {
-        cb(null, `${Date.now()}-${file.originalname}`); // Nama file unik
+        cb(null, `${Date.now()}-${file.originalname}`);
     },
 });
 

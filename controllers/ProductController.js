@@ -108,18 +108,19 @@ export const getProductById = async (req, res) => {
 
 // Konfigurasi penyimpanan multer
 // Pastikan folder 'images/' ada atau buat otomatis jika belum ada
-export const imageFolder = "images";
+// Vercel filesystem is read-only — use /tmp as writable folder
+export const imageFolder = process.env.NODE_ENV === 'production' ? '/tmp/images' : 'images';
 if (!fs.existsSync(imageFolder)) {
-    fs.mkdirSync(imageFolder);
+    fs.mkdirSync(imageFolder, { recursive: true });
 }
 
 // Konfigurasi multer untuk menyimpan file gambar
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
-        cb(null, imageFolder); // Folder untuk menyimpan file
+        cb(null, imageFolder);
     },
     filename: (req, file, cb) => {
-        cb(null, `${Date.now()}-${file.originalname}`); // Nama file unik
+        cb(null, `${Date.now()}-${file.originalname}`);
     },
 });
 
