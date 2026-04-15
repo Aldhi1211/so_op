@@ -33,14 +33,15 @@ sequelize
 
 const app = express();
 app.use(cookieParser());
-const allowedOrigins = [
-    'http://localhost:3000',
-    'https://so-op.vercel.app',
-];
 app.use(cors({
     credentials: true,
     origin: (origin, callback) => {
-        if (!origin || allowedOrigins.includes(origin)) {
+        // Allow localhost and all vercel.app domains
+        if (
+            !origin ||
+            origin.startsWith('http://localhost') ||
+            origin.endsWith('.vercel.app')
+        ) {
             callback(null, true);
         } else {
             callback(new Error('Not allowed by CORS'));
