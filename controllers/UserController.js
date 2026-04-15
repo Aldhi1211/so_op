@@ -238,10 +238,12 @@ export const login = async (req, res) => {
                 id: userId
             }
         });
+        const isProd = process.env.NODE_ENV === 'production';
         res.cookie('refreshToken', refreshToken, {
             httpOnly: true,
             maxAge: 24 * 60 * 60 * 1000,
-            secure: false
+            secure: isProd,
+            sameSite: isProd ? 'None' : 'Lax',
         });
         res.json({ accessToken });
 
