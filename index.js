@@ -33,7 +33,20 @@ sequelize
 
 const app = express();
 app.use(cookieParser());
-app.use(cors({ credentials: true, origin: 'http://localhost:3000' }));
+const allowedOrigins = [
+    'http://localhost:3000',
+    'https://so-op.vercel.app',
+];
+app.use(cors({
+    credentials: true,
+    origin: (origin, callback) => {
+        if (!origin || allowedOrigins.includes(origin)) {
+            callback(null, true);
+        } else {
+            callback(new Error('Not allowed by CORS'));
+        }
+    },
+}));
 app.use(express.json());
 
 // Routing
@@ -48,5 +61,9 @@ app.use(ContactRoute);
 // Middleware untuk menyajikan folder statis
 app.use(`/${imageFolder}`, express.static(path.join(__dirname, imageFolder)));
 
-// Jalankan server
-app.listen(5000, () => console.log('Server up and running...'));
+// Jalankan server (lokal)
+if (process.env.NODE_ENV !== 'production') {
+    app.listen(5000, () => console.log('Server up and running...'));
+}
+
+export default app;
