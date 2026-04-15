@@ -1,11 +1,7 @@
 import User from "../models/UserModel.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import multer from "multer";
-import { imageFolder } from './ProductController.js'
-import fs from "fs";
-import path from "path";
-import API_BASE_URL from "../config/config.js";
+import { uploadToCloudinary } from "../config/cloudinary.js";
 
 // export const getUsers = async (req, res) => {
 //     try {
@@ -114,25 +110,7 @@ export const register = async (req, res) => {
 }
 
 
-// Konfigurasi multer untuk menyimpan file gambar
-const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        if (!fs.existsSync(imageFolder)) {
-            fs.mkdirSync(imageFolder, { recursive: true });
-        }
-        cb(null, imageFolder);
-    },
-    filename: (req, file, cb) => {
-        cb(null, `${Date.now()}-${file.originalname}`);
-    },
-});
-
-const upload = multer({
-    storage: storage,
-    limits: { fileSize: 5 * 1024 * 1024 }, // Batas ukuran file 5MB
-});
-
-export const uploadPhoto = upload.single("foto");
+export const uploadPhoto = uploadToCloudinary.single("foto");
 
 
 export const editProfile = async (req, res) => {
@@ -154,8 +132,7 @@ export const editProfile = async (req, res) => {
         let imageUrl = user.foto;
 
         if (req.file) {
-            // Jika ada file baru yang diunggah, gunakan file tersebut
-            imageUrl = `${API_BASE_URL}/${imageFolder}/${req.file.filename}`;
+            imageUrl = req.file.path; // URL dari Cloudinary
         }
 
         // Update foto profil berdasarkan email

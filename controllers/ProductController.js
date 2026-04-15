@@ -1,11 +1,8 @@
 import Product from "../models/Product.js";
 import Specs from "../models/Spesification.js";
 import Custom from "../models/Custom.js";
-import multer from "multer";
-import fs from "fs";
-import path from "path";
 import { Op } from "sequelize";
-import API_BASE_URL from "../config/config.js";
+import { uploadToCloudinary } from "../config/cloudinary.js";
 
 export const getProduct = async (req, res) => {
     try {
@@ -106,31 +103,11 @@ export const getProductById = async (req, res) => {
     }
 };
 
-// Konfigurasi penyimpanan multer
-// Pastikan folder 'images/' ada atau buat otomatis jika belum ada
-// Vercel filesystem is read-only — use /tmp as writable folder
-export const imageFolder = process.env.NODE_ENV === 'production' ? '/tmp/images' : 'images';
-if (!fs.existsSync(imageFolder)) {
-    fs.mkdirSync(imageFolder, { recursive: true });
-}
+// imageFolder kept for backward compatibility
+export const imageFolder = 'images';
 
-// Konfigurasi multer untuk menyimpan file gambar
-const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        cb(null, imageFolder);
-    },
-    filename: (req, file, cb) => {
-        cb(null, `${Date.now()}-${file.originalname}`);
-    },
-});
-
-const upload = multer({
-    storage: storage,
-    limits: { fileSize: 5 * 1024 * 1024 }, // Batas ukuran file 5MB
-});
-
-// Middleware untuk upload file
-export const uploadPhoto = upload.single("images");
+// Middleware upload ke Cloudinary
+export const uploadPhoto = uploadToCloudinary.single("images");
 
 // Endpoint untuk menambahkan produk
 export const AddProduct = async (req, res) => {
@@ -146,8 +123,8 @@ export const AddProduct = async (req, res) => {
             return res.status(400).json({ error: "Name and description are required." });
         }
 
-        // URL file yang diupload
-        const imageUrl = `${API_BASE_URL}/${imageFolder}/${req.file.filename}`;
+        // URL dari Cloudinary
+        const imageUrl = req.file.path;
 
         // Tambahkan data ke database
         const insertProduct = await Product.create({
@@ -193,8 +170,7 @@ export const updateProduct = async (req, res) => {
         let imageUrl = product.images; // Gambar lama tetap digunakan jika tidak ada file baru
 
         if (req.file) {
-            // Jika ada file yang diunggah, gunakan file baru
-            imageUrl = `${API_BASE_URL}/${imageFolder}/${req.file.filename}`;
+            imageUrl = req.file.path; // URL dari Cloudinary
         }
 
         // Update data produk
