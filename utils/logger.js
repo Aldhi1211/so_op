@@ -3,10 +3,16 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const LOG_DIR   = path.join(__dirname, '..', 'logs');
 
-// Pastikan folder logs ada
-if (!fs.existsSync(LOG_DIR)) fs.mkdirSync(LOG_DIR, { recursive: true });
+// Di serverless (Vercel) hanya /tmp yang writable; lokal pakai folder logs/
+const IS_SERVERLESS = process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME;
+const LOG_DIR = IS_SERVERLESS
+    ? '/tmp/logs'
+    : path.join(__dirname, '..', 'logs');
+
+try {
+    if (!fs.existsSync(LOG_DIR)) fs.mkdirSync(LOG_DIR, { recursive: true });
+} catch (_) {}
 
 const pad = (n) => String(n).padStart(2, '0');
 
