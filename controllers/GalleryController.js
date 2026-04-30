@@ -1,6 +1,7 @@
 import Gallery from "../models/Gallery.js";
 import { Op } from "sequelize";
 import { uploadToCloudinary } from "../config/cloudinary.js";
+import cloudinary from "../config/cloudinary.js";
 
 // export const getGallery = async (req, res) => {
 //     try {
@@ -187,6 +188,25 @@ export const updateGallery = async (req, res) => {
 
 export const deleteGallery = async (req, res) => {
     try {
+        const gallery = await Gallery.findByPk(req.params.id);
+
+        if (!gallery) {
+            return res.status(404).json({ error: "Gallery not found." });
+        }
+
+        // Hapus foto dari Cloudinary
+        if (gallery.foto) {
+            // Ekstrak public_id dari URL Cloudinary
+            // URL format: .../upload/v<version>/so_op/<filename>.<ext>
+            const urlParts = gallery.foto.split('/');
+            const fileWithExt = urlParts[urlParts.length - 1];
+            const fileName = fileWithExt.split('.')[0];
+            const folderIndex = urlParts.indexOf('so_op');
+            const publicId = folderIndex !== -1 ? `so_op/${fileName}` : fileName;
+
+            await cloudinary.uploader.destroy(publicId);
+        }
+
         await Gallery.destroy({
             where: {
                 id: req.params.id
@@ -197,6 +217,7 @@ export const deleteGallery = async (req, res) => {
     } catch (error) {
 
         console.log(error.message);
+        res.status(500).json({ error: "Failed to delete gallery." });
 
     }
 };
