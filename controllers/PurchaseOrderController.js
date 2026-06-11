@@ -90,7 +90,8 @@ export const createPurchaseOrder = async (req, res) => {
         const total_nilai = items.reduce((sum, i) => sum + (i.quantity * i.harga_satuan), 0);
 
         const po = await PurchaseOrder.create({
-            nomor_po, id_supplier, tanggal_po, tanggal_diharapkan,
+            nomor_po, id_supplier, tanggal_po,
+            tanggal_diharapkan: tanggal_diharapkan || null,
             gudang_tujuan, metode_pembayaran, mata_uang: mata_uang || "IDR",
             catatan, status: status || "draft", dibuat_oleh, total_nilai,
         }, { transaction: t });
@@ -124,6 +125,7 @@ export const updatePurchaseOrder = async (req, res) => {
                          "metode_pembayaran", "mata_uang", "catatan", "status", "dibuat_oleh"];
         const updates = {};
         allowed.forEach(k => { if (req.body[k] !== undefined) updates[k] = req.body[k]; });
+        if (updates.tanggal_diharapkan === "") updates.tanggal_diharapkan = null;
 
         await po.update(updates);
         res.status(200).json({ msg: "PO berhasil diupdate", po });
