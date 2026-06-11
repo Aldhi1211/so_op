@@ -9,36 +9,34 @@ export const getCurrentStock = async (req, res) => {
         const stockInTotals = await StockIn.findAll({
             attributes: [
                 'id_barang',
-                'satuan',
+                [Sequelize.fn('MAX', Sequelize.col('stock_in.satuan')), 'satuan'],
                 [Sequelize.fn('SUM', Sequelize.col('stock_in.quantity')), 'total_in']
             ],
             include: [{ model: Barang, as: 'barang', attributes: ['id', 'name'] }],
-            group: ['stock_in.id_barang', 'stock_in.satuan', 'barang.id', 'barang.name']
+            group: ['stock_in.id_barang', 'barang.id', 'barang.name']
         });
 
         const stockOutTotals = await StockOut.findAll({
             attributes: [
                 'id_barang',
-                'satuan',
                 [Sequelize.fn('SUM', Sequelize.col('quantity')), 'total_out']
             ],
-            group: ['id_barang', 'satuan'],
+            group: ['id_barang'],
             raw: true
         });
 
         const outMap = {};
         stockOutTotals.forEach(item => {
-            outMap[`${item.id_barang}-${item.satuan}`] = parseInt(item.total_out) || 0;
+            outMap[item.id_barang] = parseInt(item.total_out) || 0;
         });
 
         const result = stockInTotals.map(item => {
-            const key = `${item.id_barang}-${item.satuan}`;
             const totalIn = parseInt(item.dataValues.total_in) || 0;
-            const totalOut = outMap[key] || 0;
+            const totalOut = outMap[item.id_barang] || 0;
             return {
                 id_barang: item.id_barang,
                 barang: item.barang,
-                satuan: item.satuan,
+                satuan: item.dataValues.satuan,
                 total_in: totalIn,
                 total_out: totalOut,
                 current_stock: totalIn - totalOut

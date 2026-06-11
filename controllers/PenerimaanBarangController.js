@@ -8,6 +8,7 @@ import PurchaseOrderItem from "../models/PurchaseOrderItem.js";
 import Barang from "../models/Barang.js";
 import Supplier from "../models/Supplier.js";
 import Stock from "../models/Stock.js";
+import StockIn from "../models/StockIn.js";
 
 // ── generate nomor GRN: GRN-YYYY-XXXX ─────────────────────────
 const generateNomorGRN = async () => {
@@ -139,8 +140,16 @@ export const createPenerimaan = async (req, res) => {
             }, { transaction: t });
 
             // Update stok barang bertambah sejumlah qty diterima
+            // + catat ke riwayat stok masuk (stock_in)
             if (item.quantity_diterima > 0 && item.kondisi !== "Ditolak") {
                 await updateStock(item.id_barang, item.quantity_diterima, item.satuan, t);
+                await StockIn.create({
+                    id_barang:    item.id_barang,
+                    tanggal_beli: tanggal_terima,
+                    quantity:     item.quantity_diterima,
+                    satuan:       item.satuan,
+                    submitted_by: diterima_oleh || dibuat_oleh || nomor_grn,
+                }, { transaction: t });
             }
 
             // Update qty_diterima di PO item
